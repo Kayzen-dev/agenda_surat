@@ -17,7 +17,7 @@ class ForceHttps
     public function handle(Request $request, Closure $next): Response
     {
 
-        if(str_ends_with($request->getHost(), 'vercel.app')){
+        if(str_ends_with($request->getHost(), 'vercel.app') || str_ends_with($request->getHost(), 'ngrok-free.app')){
             URL::forceScheme('https');
         }
         

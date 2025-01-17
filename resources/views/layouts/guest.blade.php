@@ -8,7 +8,8 @@
 
 
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        {{-- <title>{{ config('app.name', 'Laravel') }}</title> --}}
+        <title>Agenda Surat </title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

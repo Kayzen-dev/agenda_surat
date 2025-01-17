@@ -84,6 +84,25 @@ new class extends Component
                         </x-nav-link>
                     @endrole
 
+                    @role('kearsipan')
+                        <x-nav-link :href="$this->getDashboardRoute()" :active="request()->routeIs(Request::segment(1))" wire:navigate>
+                            {{ __('Agenda Surat') }} {{ Request::segment(1) }}
+                        </x-nav-link>
+                    @endrole
+
+
+                    @role('layanan')
+                        <x-nav-link :href="$this->getDashboardRoute()" :active="request()->routeIs(Request::segment(1))" wire:navigate>
+                            {{ __('Agenda Surat') }} {{ Request::segment(1) }}
+                        </x-nav-link>
+                    @endrole
+
+
+                    @role('pengembangan')
+                        <x-nav-link :href="$this->getDashboardRoute()" :active="request()->routeIs(Request::segment(1))" wire:navigate>
+                            {{ __('Agenda Surat') }} {{ Request::segment(1) }}
+                        </x-nav-link>
+                    @endrole
 
 
 
