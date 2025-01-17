@@ -64,17 +64,7 @@ new #[Layout('layouts.login')] class extends Component
 
 
 <div>
-    @if (session('error_message'))
-        <div class="text-red-700 px-4 py-3 rounded mb-4">
-            {{ session('error_message') }}
-        </div>
-    @endif
 
-    @if(session('message'))
-        <div class="text-yellow-500 px-4 py-3 rounded mb-4">
-            {{ session('message') }}
-        </div>
-    @endif
 
 
     <!-- Session Status -->
@@ -93,6 +83,17 @@ new #[Layout('layouts.login')] class extends Component
     
                 <h3 class="mt-3 text-xl font-medium text-center text-gray-600 dark:text-gray-200">Selamat Datang</h3>
                 <p class="mt-1 text-center text-gray-500 dark:text-gray-400">Login untuk Masuk ke aplikasi</p>
+                    @if (session('error_message'))
+                    <div class="text-red-700 px-4 py-3 rounded mb-4">
+                        {{ session('error_message') }}
+                    </div>
+                @endif
+            
+                @if(session('message'))
+                    <div class="text-yellow-500 px-4 py-3 rounded mb-4">
+                        {{ session('message') }}
+                    </div>
+                @endif
     
                 <form wire:submit="login">
                     <div class="w-full mt-4">
