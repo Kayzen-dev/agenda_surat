@@ -43,27 +43,35 @@ Route::middleware(['auth','verified','chek_role'])->group(function(){
     })->middleware('role:sekretariat')->name('sekretariat');
 
 
+    Route::get('/kearsipan', function () {
+        return view('kearsipan.index');
+    })->middleware('role:kearsipan')->name('kearsipan');
+
+
+    Route::get('/layanan', function () {
+        return view('layanan.index');
+    })->middleware('role:layanan')->name('layanan');
+
+    Route::get('/pengembangan', function () {
+        return view('pengembangan.index');
+    })->middleware('role:pengembangan')->name('pengembangan');
+
+
+
 
 
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         
-        Route::get('/export-users', function () {
+
+         Route::get('/export-users', function () {
+
+            $filePath = '/tmp/users.xlsx'; 
+            Excel::store(new UsersExport, $filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend();
             return Excel::download(new UsersExport(), 'users.xlsx');
         })->name('export.user');
-
-
-        Route::get('/export-users-pdf', function() {
-
-                $users = \App\Models\User::with('roles')->get();
-
-                // Kirim data ke view
-                $pdf = Pdf::loadView('Pdf.users', compact('users'));
-
-                // Unduh file PDF
-                return $pdf->download('agenda-surat-users.pdf');
-            
-        })->name('export-user-pdf');
 
         Route::get('/users', \App\Livewire\User\AdminCrudUser::class)->name('admin.users.index');
         
@@ -136,6 +144,7 @@ Route::middleware(['auth','verified','chek_role'])->group(function(){
 
 
     Route::get('/export-surat-pdf/{bidang_surat}/{tipe_surat}', function($bidang_surat,$tipe_surat) {
+
 
                 if ($tipe_surat == 'surat-keluar') {
                     $suratKeluar = SuratKeluar::with('suratMasuk') 
