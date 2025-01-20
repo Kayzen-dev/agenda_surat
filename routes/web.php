@@ -16,7 +16,7 @@ Route::get('/guest', function(){
 })->middleware('guest')->name('guest.page');
 
 
-Route::middleware(['auth','verified','chek_role'])->group(function(){
+Route::middleware(['auth','verified','chek_role','session.timeout'])->group(function(){
 
     
     Route::get('/home', function(){
