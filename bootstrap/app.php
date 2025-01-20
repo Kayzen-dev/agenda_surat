@@ -18,8 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'chek_role' => \App\Http\Middleware\checkUser::class,
+            'session.timeout' => \App\Http\Middleware\SessionTimeout::class,
             // 'guest' => \App\Http\Middleware\cekGuest::class,
-            // 'session.timeout' => \App\Http\Middleware\SessionTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
