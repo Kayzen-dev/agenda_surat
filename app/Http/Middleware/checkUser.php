@@ -23,8 +23,6 @@ class checkUser
                 if($user->status_login == false){
                     return redirect()->route('login')->with('error_message', 'Anda Dikeluarkan Dari sesi');
                 }
-            
-
         }
 
 
