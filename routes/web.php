@@ -16,7 +16,7 @@ Route::get('/guest', function(){
 })->middleware('guest')->name('guest.page');
 
 
-Route::middleware(['auth','verified','chek_role','session.timeout'])->group(function(){
+Route::middleware(['auth','verified','chek_role','session_timeout'])->group(function(){
 
     
     Route::get('/home', function(){
@@ -81,6 +81,19 @@ Route::middleware(['auth','verified','chek_role','session.timeout'])->group(func
             $user->save();
             return redirect('/admin/' . $route)->with('logout','Berhasil Log out '.$user->name);
         })->name('logout');
+
+
+                Route::get('/export-users-pdf', function() {
+
+                    $users = App\Models\User::query()->with('roles')->get();
+        
+                // Kirim data ke view
+                $pdf = Pdf::loadView('Pdf.users', compact('users'));
+        
+                // Unduh file PDF
+                return $pdf->download('users_agenda_surat.pdf');
+             })->name('export-users-pdf');
+
 
     });
     
