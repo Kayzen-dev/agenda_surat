@@ -17,8 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'chek_role' => \App\Http\Middleware\checkUser::class,
-            'session_timeout' => \App\Http\Middleware\SessionTimeout::class
+            'checkUser' => \App\Http\Middleware\checkUser::class,
+            'session_timeout' => \App\Http\Middleware\SessionTimeout::class,
+            'userAkses' => \App\Http\Middleware\userAkses::class
             // 'guest' => \App\Http\Middleware\cekGuest::class,
         ]);
     })

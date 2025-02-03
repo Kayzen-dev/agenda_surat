@@ -13,6 +13,7 @@ new #[Layout('layouts.login')] class extends Component
 {
     public LoginForm $form;
 
+
     /**
      * Handle an incoming authentication request.
      */
@@ -21,8 +22,7 @@ new #[Layout('layouts.login')] class extends Component
         $this->validate();
 
         $this->form->authenticate();
-        $authID = Auth::user()->id;
-        $user = User::find($authID);
+        $user = User::find(Auth::id());
 
         if (Auth::check() && $user->status_login) {
             Auth::logout();
@@ -30,8 +30,7 @@ new #[Layout('layouts.login')] class extends Component
         }
 
         if (Auth::check()) {
-            $authID = Auth::user()->id;
-            $user = User::find($authID);
+            $user = User::find(Auth::id());
             $user->status_login = true;
             $user->save();
         }
@@ -76,6 +75,9 @@ new #[Layout('layouts.login')] class extends Component
         <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <div class="px-6 py-4">
 
+                @php
+                    // dd(session()->all());
+                @endphp
 
                 <div class="flex justify-center mx-auto">
                     <img class="w-auto h-7 sm:h-8" src="{{ asset('images/logo_Dis.png') }}" style="width: 110px !important; height: 110px !important;" alt="Logo">
