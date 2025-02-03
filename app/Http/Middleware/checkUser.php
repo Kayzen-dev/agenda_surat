@@ -18,14 +18,16 @@ class checkUser
     public function handle(Request $request, Closure $next): Response
     {
 
-        if (Auth::check()) {
                 $user = User::find(Auth::id());
-                if($user->status_login == false){
-                    return redirect()->route('login')->with('error_message', 'Anda Dikeluarkan Dari sesi');
+
+                if ($user && $user->status_login == 0) {
+                    Auth::logout();
+                    return redirect()->route('login')->with('message', 'Anda telah keluar Dari sesi');
+                }else{
+                     return $next($request);
+
                 }
-        }
+               
 
-
-        return $next($request);
     }
 }

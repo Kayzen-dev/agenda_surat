@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+
+Route::get('/', function(){
+    return view('welcome');
+})->middleware('userAkses')->name('home');
+
 
 
 Route::get('/guest', function(){
@@ -16,19 +20,7 @@ Route::get('/guest', function(){
 })->middleware('guest')->name('guest.page');
 
 
-Route::middleware(['auth','verified','chek_role','session_timeout'])->group(function(){
-
-    
-    Route::get('/home', function(){
-        if (Auth::check()) {
-            $user = \App\Models\User::find(Auth::id());
-            $user->status_login = false;
-            $user->save();
-        }
-
-        Auth::logout();
-        return view('welcome');
-    })->name('dashboard');
+Route::middleware(['auth','verified','checkUser','session_timeout'])->group(function(){
 
 
 
@@ -77,6 +69,11 @@ Route::middleware(['auth','verified','chek_role','session_timeout'])->group(func
         
         Route::get('/logout/{id}/{route}', function ($id, $route) {
             $user = \App\Models\User::findOrFail($id);
+            if ($user->hasRole('admin')) {
+                $user->status_login = false;
+                $user->save();
+                Auth::logout();
+            }
             $user->status_login = false;
             $user->save();
             return redirect('/admin/' . $route)->with('logout','Berhasil Log out '.$user->name);
@@ -132,17 +129,6 @@ Route::middleware(['auth','verified','chek_role','session_timeout'])->group(func
         }
 
     })->name('surat_masuk');
-
-
-    // Route::get('/export-surat-masuk', function () {
-    //     return Excel::download(new \App\Exports\SuratMasukExport(), 'surat-masuk.xlsx');
-    // })->name('export.surat.masuk');
-
-
-
-    // Route::get('/export-surat-keluar', function () {
-    //     return Excel::download(new \App\Exports\SuratKeluarExport(), 'surat-keluar.xlsx');
-    // })->name('export.surat.keluar');
 
 
     // Route untuk ekspor Surat Masuk berdasarkan bidang
