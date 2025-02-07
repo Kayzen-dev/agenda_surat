@@ -70,7 +70,6 @@ class SuratMasukTable extends Component
                 ->where('no_agenda', 'like', '%' . $this->form->no_agenda . '%')
                 ->where('nomor_surat', 'like', '%' . $this->form->nomor_surat . '%')
                 ->where('asal_surat_pengirim', 'like', '%' . $this->form->asal_surat_pengirim . '%')
-                ->with('suratKeluar')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->paginate),
         ]);

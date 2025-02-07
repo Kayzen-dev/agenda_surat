@@ -42,39 +42,29 @@
     </style>
 </head>
 <body>
-    <h3>Daftar Surat Keluar {{ $bidang_surat }}</h3>
+    <h3>Daftar Surat Keluar {{ $kategori_surat }}</h3>
     <table>
         <thead>
             <tr>
                 <th>NO</th>
-                <th>Tanggal Kirim Surat</th>
-                <th>Nomor Surat</th>
                 <th>Tanggal Surat</th>
+                <th>Nomor Surat</th>
                 <th>Tujuan Surat</th>
                 <th>Perihal/Isi Surat</th>
                 <th>Keterangan</th>
                 <th>Kategori Surat</th>
-                <th>Surat Masuk</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($suratKeluar as $index => $surat)
             <tr>
                 <td class="center">{{ $index + 1 }}</td>
-                <td class="date-format">{{ \Carbon\Carbon::parse($surat->tanggal_kirim_surat)->format('d-M-y') }}</td>
+                <td class="date-format">{{ $surat->tanggal_surat }}</td>
                 <td>{{ $surat->nomor_surat }}</td>
-                <td class="date-format">{{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d-M-y') }}</td>
                 <td>{{ $surat->tujuan_surat }}</td>
                 <td>{{ $surat->perihal_isi_surat }}</td>
                 <td>{{ $surat->keterangan }}</td>
                 <td>{{ $surat->kategori_surat }}</td>
-                <td>
-                    @if($surat->suratMasuk)
-                        {{ $surat->suratMasuk->nomor_surat }} - {{ $surat->suratMasuk->asal_surat_pengirim }}
-                    @else
-                        Tidak ada surat masuk
-                    @endif
-                </td>
             </tr>
             @empty
                 <td colspan="8">Tidak Ada Surat Keluar</td>

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\SuratMasuk;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -13,16 +12,15 @@ class SuratKeluar extends Model
     protected $table = 'surat_keluar';
 
     protected $fillable = [
-        'tanggal_kirim_surat',
+        'bidang_surat',
+        'kategori_surat',
         'nomor_surat',
         'tanggal_surat',
         'tujuan_surat',
         'perihal_isi_surat',
         'keterangan',
+        'file_surat'
     ];
 
-    public function suratMasuk()
-    {
-        return $this->belongsTo(SuratMasuk::class,'id_surat_masuk');
-    }
+
 }

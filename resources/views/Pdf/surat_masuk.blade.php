@@ -62,7 +62,6 @@
                     <th>Asal Surat/Pengirim</th>
                     <th>Perihal/Isi Surat</th>
                     <th>Isi Disposisi</th>
-                    <th>Surat Keluar</th>
                     <th>Kategori Surat</th>
                     <th>Keterangan</th>
                 </tr>
@@ -80,13 +79,6 @@
                         <td>{{ $surat->asal_surat_pengirim }}</td>
                         <td>{{ $surat->perihal_isi_surat }}</td>
                         <td>{{ $surat->isi_disposisi }}</td>
-                        <td>
-                            @if($surat->suratKeluar)
-                                {{ $surat->suratKeluar->nomor_surat }}
-                            @else
-                                Tidak ada surat keluar
-                            @endif
-                        </td>
                         <td>{{ $surat->kategori_surat }}</td>
                         <td>{{ $surat->keterangan }}</td>
                     </tr>

@@ -6,7 +6,7 @@
         </x-slot>
     
         <x-slot name="content">
-            <p>Apakah anda ingin menghapus data surat dengan ID: {{ $id }} dan dengan isi surat : {{ $isi }}</p>
+            <p>Apakah anda ingin menghapus data surat dengan ID: {{ $id }} dan dengan nomor surat : {{ $nomor_surat }}</p>
 
         </x-slot>
     

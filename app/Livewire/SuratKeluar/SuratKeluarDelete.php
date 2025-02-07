@@ -16,20 +16,28 @@ class SuratKeluarDelete extends Component
 
     public $modalSuratKeluarDelete = false;
 
-
     #[Locked]
-    public $isi;
+    public $nomor_surat;
 
     #[On('dispatch-surat-keluar-table-delete')]
-    public function set_surat($id,$isi){
+    public function set_surat($id,$nomor_surat){
         $this->id = $id;
-        $this->isi = $isi;
+        $this->nomor_surat = $nomor_surat;
         $this->modalSuratKeluarDelete = true;
     }
 
     public function del() {
-        $del = SuratKeluar::destroy( $this->id );
-
+        $del = SuratKeluar::findOrfail($this->id);
+        $del->update(
+            [
+            'bidang_surat' => 'none',
+            'nomor_surat' => '-',
+            'tujuan_surat' => '-',
+            'perihal_isi_surat' => '-',
+            'keterangan' => '-',
+            'file_surat' => '-',
+            ]
+        );
         ($del)
         ? $this->dispatch('notify', title: 'success',message: 'data berhasil dihapus')
         : $this->dispatch('notify', title: 'fail', message: 'data gagal dihapus ');

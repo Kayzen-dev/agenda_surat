@@ -18,11 +18,11 @@ class SuratKeluarTable extends Component
 
     public SuratKeluarForm $form;
 
+
     public $paginate = 5; // Jumlah data per halaman
     public $sortBy = 'surat_keluar.id'; // Kolom default untuk pengurutan
     public $sortDirection = 'desc'; // Arah pengurutan default
     public $hideDeleteButton = false;
-
 
 
     public function mount(){
@@ -33,6 +33,17 @@ class SuratKeluarTable extends Component
 
         if ($segment1 === 'sekretariat' && $segment2 !== null) {
             $this->hideDeleteButton = true;
+        }
+    }
+
+
+
+
+    public function downloadFile($id)
+    {
+        $surat = SuratKeluar::find($id);
+        if ($surat && $surat->file_surat) {
+            return response()->download(storage_path("app/public/{$surat->file_surat}"));
         }
     }
 
@@ -51,8 +62,6 @@ class SuratKeluarTable extends Component
                 return $roles[0];
             }
         }
-
-
     }
 
     // Realtime proses
@@ -61,25 +70,16 @@ class SuratKeluarTable extends Component
     #[On('dispatch-surat-keluar-delete-del')]
     public function render()
     {
-        // if (Auth::check()) {
-        //     $user = User::find(Auth::id());
-        //     $roles = $user->getRoleNames();  
-        //     $this->form->bidang_surat = $roles['0'];
-        //     $this->bidang_surat = $roles['0'];
-        // }
-        // $this->setBidangSurat();
 
         
         return view('livewire.surat-keluar.surat-keluar-table',[
             'data' => SuratKeluar::where('id', 'like', '%' . $this->form->id . '%')
                 ->where('bidang_surat', $this->form->bidang_surat)
-                ->where('tanggal_kirim_surat', 'like', '%' . $this->form->tanggal_kirim_surat . '%')
                 ->where('tanggal_surat', 'like', '%' . $this->form->tanggal_surat . '%')
                 ->where('nomor_surat', 'like', '%' . $this->form->nomor_surat . '%')
                 ->where('tujuan_surat', 'like', '%' . $this->form->tujuan_surat . '%')
                 ->where('perihal_isi_surat', 'like', '%' . $this->form->perihal_isi_surat . '%')
                 ->where('keterangan', 'like', '%' . $this->form->keterangan . '%')
-                ->with('suratMasuk')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->paginate),
         ]);

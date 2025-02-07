@@ -44,6 +44,7 @@ return new class extends Migration
             $table->string('perihal_isi_surat');
             $table->string('isi_disposisi');
             $table->text('keterangan')->nullable();
+            $table->string('file_surat')->nullable();
             $table->timestamps();
         });
     }
