@@ -18,9 +18,6 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th class="text-sm cursor-pointer" @click="$wire.sortField('tanggal_kirim_surat')">
-                        <x-sort :$sortDirection :$sortBy :field="'tanggal_kirim_surat'" /> Tanggal Kirim Surat
-                    </th>
                     <th class="text-sm cursor-pointer" @click="$wire.sortField('nomor_surat')">
                         <x-sort :$sortDirection :$sortBy :field="'nomor_surat'" /> Nomor Surat
                     </th>
@@ -36,7 +33,6 @@
                     <th class="text-sm cursor-pointer" @click="$wire.sortField('keterangan')">
                         <x-sort :$sortDirection :$sortBy :field="'keterangan'" /> Keterangan
                     </th>
-                    <th class="text-sm">Surat Masuk Yang Terkait</th>
                 </tr>
 
 
@@ -47,9 +43,6 @@
                         <span wire:loading.class="loading loading-spinner loading-xs text-white"></span>
                     </td>
 
-                    <td>
-                        <x-input wire:model="form.tanggal_kirim_surat" type="search" placeholder="Cari Tanggal Surat" class="w-full text-sm" />
-                    </td>
                     <td>
                         <x-input wire:model="form.nomor_surat" type="search" placeholder="Cari Nomor Surat" class="w-full text-sm" />
                     </td>
@@ -77,13 +70,13 @@
                 @forelse ($data as $item)
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
-                        <td  class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_kirim_surat)->format('d-M-y') }}</td>
+                        {{-- <td  class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_kirim_surat)->format('d-M-y') }}</td> --}}
                         <td  class="text-center">{{ $item->nomor_surat }}</td>
-                        <td  class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d-M-y') }}</td>
+                        <td  class="text-center">{{ $item->tanggal_surat }}</td>
+                        {{-- <td  class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d-M-y') }}</td> --}}
                         <td  class="text-center">{{ $item->tujuan_surat }}</td>
                         <td  class="text-center">{{ $item->perihal_isi_surat }}</td>
                         <td  class="text-center">{{ $item->keterangan }}</td>
-                        <td  class="text-center">{{ $item->suratMasuk->asal_surat_pengirim ?? "Tidak Ada Surat Masuk"}}</td>
                         <td class="text-center">
                             <x-button @click="$dispatch('dispatch-surat-keluar-table-edit', { id: '{{ $item->id }}' })"
                                 type="button" class="text-sm">Detail</x-button>
@@ -91,10 +84,19 @@
                             @if (!$hideDeleteButton)
 
                                     <x-danger-button
-                                        @click="$dispatch('dispatch-surat-keluar-table-delete', { id: '{{ $item->id }}', isi : '{{ $item->perihal_isi_surat }}' })">
+                                        @click="$dispatch('dispatch-surat-keluar-table-delete', { id: '{{ $item->id }}', nomor_surat : '{{ $item->nomor_surat }}' })">
                                         Delete</x-danger-button>
 
-                                @endif
+                            @endif
+                            @if($item->file_surat)
+                                <button wire:click="downloadFile({{ $item->id }})" class="btn btn-success">
+                                    <i class="fas fa-download"></i> Unduh
+                                </button>
+                            @else
+                                <button class="btn btn-primary"  @click="$dispatch('dispatch-surat-keluar-table-upload', { id: '{{ $item->id }}' })">
+                                    Upload
+                                </button>
+                            @endif
                         </td>
 
                     </tr>
@@ -112,4 +114,9 @@
     <div class="mt-3">
         {{ $data->onEachSide(1)->links() }}
     </div>
+
+    <livewire:FileSurat.file-surat />
+
+
+  
 </div>

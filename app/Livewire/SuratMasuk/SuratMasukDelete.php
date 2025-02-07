@@ -17,12 +17,12 @@ class SuratMasukDelete extends Component
 
 
     #[Locked]
-    public $isi;
+    public $nomor_surat;
 
     #[On('dispatch-surat-masuk-table-delete')]
-    public function set_surat($id,$isi){
+    public function set_surat($id,$nomor_surat){
         $this->id = $id;
-        $this->isi = $isi;
+        $this->nomor_surat = $nomor_surat;
         $this->modalSuratMasukDelete = true;
     }
 

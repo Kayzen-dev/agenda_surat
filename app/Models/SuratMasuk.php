@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\SuratKeluar;
 use Illuminate\Database\Eloquent\Model;
 
 class SuratMasuk extends Model
@@ -11,7 +10,7 @@ class SuratMasuk extends Model
     protected $table = 'surat_masuk';
 
     protected $fillable = [
-        'type_surat',
+        'bidang_surat',
         'kategori_surat',
         'tanggal_terima_surat',
         'no_agenda',
@@ -21,10 +20,7 @@ class SuratMasuk extends Model
         'perihal_isi_surat',
         'isi_disposisi',
         'keterangan',
+        'file_surat'
     ];
 
-    public function suratKeluar()
-    {
-        return $this->hasOne(SuratKeluar::class ,'id_surat_masuk');
-    }
 }

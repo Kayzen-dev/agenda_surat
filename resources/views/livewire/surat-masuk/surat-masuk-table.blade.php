@@ -39,7 +39,6 @@
                         <x-sort :$sortDirection :$sortBy :field="'asal_surat_pengirim'" /> Asal Surat / Pengirim
                     </th>
 
-                    <th class="text-sm cursor-pointer" >Surat Keluar</th>
 
                 </tr>
                 <tr>
@@ -84,7 +83,6 @@
                         <td class="text-center">{{ $item->bidang_surat }}</td>
                         <td  class="text-center">{{ $item->nomor_surat }}</td>
                         <td  class="text-center text-sm">{{ $item->asal_surat_pengirim }}</td>
-                        <td  class="text-center text-sm">{{ $item->suratKeluar->nomor_surat ?? 'Belum ada Surat Keluar' }}</td>
                         <td class="text-center">
                             <x-button @click="$dispatch('dispatch-surat-masuk-table-edit', { id: '{{ $item->id }}' })"
                                 type="button" class="text-sm">Detail</x-button>
@@ -92,7 +90,7 @@
 
                             @if (!$hideDeleteButton)
                                 <x-danger-button
-                                    @click="$dispatch('dispatch-surat-masuk-table-delete', { id: '{{ $item->id }}', isi: '{{ $item->perihal_isi_surat }}' })">
+                                    @click="$dispatch('dispatch-surat-masuk-table-delete', { id: '{{ $item->id }}', nomor_surat: '{{ $item->nomor_surat }}' })">
                                     Delete
                                 </x-danger-button>
                             @endif

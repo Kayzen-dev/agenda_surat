@@ -1,4 +1,4 @@
-<div x-data="suratMasukRealtime()" x-init="init()">
+<div x-data="suratKeluarRealtime()" x-init="init()">
 
     @if ($hideButton)
     <x-secondary-button @click="$wire.set('modalSuratKeluarCreate', true)">
@@ -8,13 +8,69 @@
 
 
 
-    <a href="{{ route('export.surat.keluar',['bidang_surat' => $bidang_surat]) }}" class="btn btn-sm inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+    {{-- <a href="{{ route('export.surat.keluar',['bidang_surat' => 'none', 'kategori_surat' => 'Surat Perintah']) }}" class="btn btn-sm inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
         EXPORT EXCEL
     </a>
 
     <a href="{{ route('export-surat-pdf',['bidang_surat' => $bidang_surat, 'tipe_surat' => 'surat-keluar']) }}" class="btn btn-sm inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
         EXPORT PDF
-    </a>
+    </a> --}}
+
+    <form class="flex justify-end">
+        <div class="w-full max-w-xs mr-3">
+            <label for="export" class="label dark:text-grey">Export Excel Surat Keluar</label>
+            <select wire:model="kategori_surat" wire:change="exportExcel" id="export" class="select select-bordered w-full max-w-xs border-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                <option selected value="null">Pilih Kategori Surat Keluar</option>
+                <option value="Surat Perintah">Surat Perintah</option>
+                <option value="Surat Tugas">Surat Tugas</option>
+                <option value="Surat Perjalanan Dinas">Surat Perjalanan Dinas</option>
+                <option value="Disposisi">Disposisi</option>
+                <option value="Nota Dinas">Nota Dinas</option>
+                <option value="Surat Dinas">Surat Dinas</option>
+                <option value="Surat Kuasa">Surat Kuasa</option>
+                <option value="Berita Acara">Berita Acara</option>
+                <option value="Surat Keterangan">Surat Keterangan</option>
+                <option value="Telaahan Staf">Telaahan Staf</option>
+                <option value="Pengumuman">Pengumuman</option>
+                <option value="Surat Pernyataan Melaksanakan Tugas">Surat Pernyataan Melaksanakan Tugas</option>
+                <option value="Surat Panggilan">Surat Panggilan</option>
+                <option value="Surat Izin">Surat Izin</option>
+                <option value="Surat Perjanjian">Surat Perjanjian</option>
+                <option value="Rekomendasi">Rekomendasi</option>
+                <option value="Sertifikat">Sertifikat</option>
+                <option value="Piagam">Piagam</option>
+            </select>
+        
+        </div>
+        <div class="w-full max-w-xs">
+            <label for="export" class="label dark:text-grey">Export Pdf Surat Keluar</label>
+            <select wire:model="kategori_surat_pdf" wire:change="exportPdf" id="export" class="select select-bordered w-full max-w-xs border-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                <option selected value="null">Pilih Kategori Surat Keluar</option>
+                <option value="Surat Perintah">Surat Perintah</option>
+                <option value="Surat Tugas">Surat Tugas</option>
+                <option value="Surat Perjalanan Dinas">Surat Perjalanan Dinas</option>
+                <option value="Disposisi">Disposisi</option>
+                <option value="Nota Dinas">Nota Dinas</option>
+                <option value="Surat Dinas">Surat Dinas</option>
+                <option value="Surat Kuasa">Surat Kuasa</option>
+                <option value="Berita Acara">Berita Acara</option>
+                <option value="Surat Keterangan">Surat Keterangan</option>
+                <option value="Telaahan Staf">Telaahan Staf</option>
+                <option value="Pengumuman">Pengumuman</option>
+                <option value="Surat Pernyataan Melaksanakan Tugas">Surat Pernyataan Melaksanakan Tugas</option>
+                <option value="Surat Panggilan">Surat Panggilan</option>
+                <option value="Surat Izin">Surat Izin</option>
+                <option value="Surat Perjanjian">Surat Perjanjian</option>
+                <option value="Rekomendasi">Rekomendasi</option>
+                <option value="Sertifikat">Sertifikat</option>
+                <option value="Piagam">Piagam</option>
+            </select>
+        
+        </div>
+    </form>
+    
+
+      
 
     <x-dialog-surat-masuk wire:model="modalSuratKeluarCreate" :id="'modal-surat-keluar-create'" submit="save">
         <x-slot name="title">
@@ -22,78 +78,107 @@
         </x-slot>
 
         <x-slot name="content">
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        <label for="kategori_surat" class="label dark:text-grey">Kategori Surat Keluar</label>
-                            <select wire:model="form.kategori_surat" id="kategori_surat" required class="select select-bordered w-full">
-                                <option value="">-- Pilih Kategori Surat Keluar --</option>
-                                <option value="Surat Perintah">Surat Perintah</option>
-                                <option value="Surat Tugas">Surat Tugas</option>
-                                <option value="Surat Perjalanan Dinas">Surat Perjalanan Dinas</option>
-                                <option value="Disposisi">Disposisi</option>
-                                <option value="Nota Dinas">Nota Dinas</option>
-                                <option value="Surat Dinas">Surat Dinas</option>
-                                <option value="Surat Kuasa">Surat Kuasa</option>
-                                <option value="Berita Acara">Berita Acara</option>
-                                <option value="Surat Keterangan">Surat Keterangan</option>
-                                <option value="Telaahan Staf">Telaahan Staf</option>
-                                <option value="Pengumuman">Pengumuman</option>
-                                <option value="Surat Pernyataan Melaksanakan Tugas">Surat Pernyataan Melaksanakan Tugas</option>
-                                <option value="Surat Panggilan">Surat Panggilan</option>
-                                <option value="Surat Izin">Surat Izin</option>
-                                <option value="Surat Perjanjian">Surat Perjanjian</option>
-                                <option value="Rekomendasi">Rekomendasi</option>
-                                <option value="Sertifikat">Sertifikat</option>
-                                <option value="Piagam">Piagam</option>
-                            </select>
-      
-                            <x-input-form-error for="form.kategori_surat" class="mt-1" />
-      
-                    </div>
 
-
-
-
-                <!-- Tanggal Surat -->
+            <div class="grid grid-cols-2 gap-4" >
                 <div>
-                    <label for="tanggal_surat" class="label dark:text-grey">Tanggal Surat</label>
-                    <input wire:model="form.tanggal_surat" type="date" id="tanggal_surat" required class="input input-bordered w-full">
-                    <x-input-form-error for="form.tanggal_surat" class="mt-1" />
+                    <label for="kategori">Pilih Kategori Surat Keluar :</label>
+                    <select id="kategori"  wire:model="form.kategori_surat" x-model="selectedKategori" @change="fetchSuratKeluarList()" class="select select-bordered w-full">
+                        <option selected value="">-- Pilih Kategori --</option>
+                        <option value="Surat Perintah">Surat Perintah</option>
+                        <option value="Surat Tugas">Surat Tugas</option>
+                        <option value="Surat Perjalanan Dinas">Surat Perjalanan Dinas</option>
+                        <option value="Disposisi">Disposisi</option>
+                        <option value="Nota Dinas">Nota Dinas</option>
+                        <option value="Surat Dinas">Surat Dinas</option>
+                        <option value="Surat Kuasa">Surat Kuasa</option>
+                        <option value="Berita Acara">Berita Acara</option>
+                        <option value="Surat Keterangan">Surat Keterangan</option>
+                        <option value="Telaahan Staf">Telaahan Staf</option>
+                        <option value="Pengumuman">Pengumuman</option>
+                        <option value="Surat Pernyataan Melaksanakan Tugas">Surat Pernyataan Melaksanakan Tugas</option>
+                        <option value="Surat Panggilan">Surat Panggilan</option>
+                        <option value="Surat Izin">Surat Izin</option>
+                        <option value="Surat Perjanjian">Surat Perjanjian</option>
+                        <option value="Rekomendasi">Rekomendasi</option>
+                        <option value="Sertifikat">Sertifikat</option>
+                        <option value="Piagam">Piagam</option>
+                    </select>
+                    <x-input-form-error for="form.kategori_surat" class="mt-1" />
                 </div>
-
-                <!-- Tanggal Kirim Surat -->
+            
                 <div>
-                    <label for="tanggal_kirim_surat" class="label dark:text-grey">Tanggal Kirim Surat</label>
-                    <input wire:model="form.tanggal_kirim_surat" type="date" id="tanggal_kirim_surat" required class="input input-bordered w-full">
-                    <x-input-form-error for="form.tanggal_kirim_surat" class="mt-1" />
+                    <label for="tanggal">Pilih Tanggal:</label>
+                    <input type="date" id="tanggal"  wire:model="form.tanggal_surat" x-model="selectedTanggalRaw" @change="updateFormattedDate()" class="input input-bordered w-full">
                 </div>
-
+            
 
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <!-- Pilih Surat Masuk -->
-                <div>
-                    <label for="id_surat_masuk" class="label dark:text-grey">Balas Surat Masuk</label>
-                    <select wire:model.defer="form.id_surat_masuk" id="id_surat_masuk" class="select select-bordered w-full">
-                        <option value="">Pilih Surat Masuk</option>
-                        <template x-for="surat in suratMasukList" :key="surat.id">
-                            <option :value="surat.id" x-text="`${surat.nomor_surat} - ${surat.asal_surat_pengirim}`"></option>
+
+            <div class="grid grid-cols-1 gap-6 mt-6"> 
+                <Label>Nomor Surat </Label>
+                <div class="flex items-center space-x-2">
+                    {{-- <input type="text" wire:model="form.kode_akses"   class="input text-gray-200 p-2 rounded-l-md w-50" placeholder="Kode Hak akses" aria-label="Kode"> <!-- Mengatur lebar input agar serasi --> --}}
+                    <select wire:model="form.kode_akses" class="select select-bordered p-2 rounded-md w-50">
+                        <option selected value="">-- Pilih Kode Hak Akses --</option>
+                        <option value="B">B</option>
+                        <option value="T">T</option>
+                        <option value="R">R</option>
+                        <option value="SR">SR</option>
+                    </select>
+                    
+                    <span class="text-black text-2xl">/</span>
+              
+                    <input type="text"  wire:model="form.kode_klasifikasi" class="input text-gray-200 p-2 rounded-md w-50" placeholder="Kode klasifikasi" aria-label="Kode"> <!-- Mengatur lebar input agar serasi -->
+                    
+              
+                    
+                    <span class="text-black text-2xl">/</span>
+              
+
+                    <!-- Select No Urut -->
+                    <select id="surat" wire:model="form.no" class="select select-bordered p-2 rounded-md w-50">
+                        <option selected value="">-- Pilih No urut --</option>
+                        <template x-for="surat in suratKeluarList" :key="surat.no">
+                            <option :value="surat.no" x-text="surat.nomor_surat !== '-' ? `${surat.no} - ${surat.nomor_surat}` : `${surat.no} - no urut tersedia`"></option>
                         </template>
                     </select>
-                    <x-input-form-error for="form.id_surat_masuk" class="mt-1" />
+
+
+              
+                    
+                    <span class="text-black text-2xl">/</span>
+              
+                    {{-- <input type="text"  wire:model="form.nama_instansi" class="input text-gray-200 p-2 rounded-md w-50" placeholder="Nama Instansi/Bidang" oninput="this.value = this.value.toUpperCase()" aria-label="Nama Bidang/Instansi"> --}}
+                    <select wire:model="form.nama_instansi" class="select select-bordered p-2 rounded-md w-50">
+                        <option selected value="">-- Pilih Instansi/Bidang --</option>
+                        <Option value="{{ ucwords($bidang_surat) }}">{{ ucwords($bidang_surat) }}</Option>
+                        <option value="DISPUSIP">DISPUSIP</option>
+                        {{-- <option value="Kearsipan">Kearsipan</option>
+                        <option value="Pengembangan">Pengembangan</option>
+                        <option value="Layanan">Layanan</option>
+                        <option value="Sekretariat">Sekretariat</option> --}}
+                    </select>
+                    
+                    <span class="text-black text-2xl">/</span>
+              
+                    <input type="number"  wire:model="form.tahun" class="input text-gray-200 p-2 rounded-r-md w-50" placeholder="Tahun" aria-label="Tahun">
+
                 </div>
-
-
-                <!-- Nomor Surat -->
-                <div>
-                    <label for="nomor_surat" class="label dark:text-grey">Nomor Surat</label>
-                    <input wire:model="form.nomor_surat" type="text" id="nomor_surat" class="input input-bordered w-full" required placeholder="Masukkan Nomor Surat">
-                    <x-input-form-error for="form.nomor_surat" class="mt-1" />
-                </div>
-
-
             </div>
+
+            <div class="flex justify-start gap-6 mt-6">
+                <x-input-form-error for="form.kode_akses" class="m-2" />
+                <x-input-form-error for="form.kode_klasifikasi" class="m-2" />
+                <x-input-form-error for="form.no" class="m-2" />
+                <x-input-form-error for="form.nama_instansi" class="m-2" />
+                <x-input-form-error for="form.tahun" class="m-2" />
+            </div>
+            
+            
+
+
+
 
             <div class="grid grid-cols-2 gap-4">
                 <!-- Tujuan Surat -->
@@ -132,30 +217,45 @@
 
     </x-dialog-surat-masuk>
 
-
+ 
     <script>
-        function suratMasukRealtime() {
+        function suratKeluarRealtime() {
             return {
-                suratMasukList: [],
-                fetchSuratMasukList() {
-                    fetch('/surat-masuk')
-                        .then((response) => response.json())
-                        .then((data) => {
-                            this.suratMasukList = data;
+                selectedKategori: '',
+                selectedTanggalRaw: new Date().toISOString().split('T')[0], // Default: Hari ini (format YYYY-MM-DD)
+                selectedTanggalFormatted: '', // Format "04 Februari 2035"
+                suratKeluarList: [],
+
+                // Fungsi untuk mengubah tanggal ke format "04 Februari 2035"
+                updateFormattedDate() {
+                    const dateObj = new Date(this.selectedTanggalRaw);
+                    const formatter = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                    this.selectedTanggalFormatted = formatter.format(dateObj);
+                    this.fetchSuratKeluarList();
+                },
+
+                // Fungsi mengambil data surat keluar
+                fetchSuratKeluarList() {
+                    if (!this.selectedKategori || !this.selectedTanggalFormatted) return;
+
+                    fetch(`/surat-keluar/${encodeURIComponent(this.selectedKategori)}/${encodeURIComponent(this.selectedTanggalFormatted)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.suratKeluarList = data;
                         })
-                        .catch((error) => {
-                            console.error('Gagal memuat daftar surat masuk:', error);
+                        .catch(error => {
+                            console.error('Gagal memuat daftar surat keluar:', error);
                         });
                 },
-                init() {
-                    this.fetchSuratMasukList();
 
+                init() {
+                    this.updateFormattedDate();
                     setInterval(() => {
-                        this.fetchSuratMasukList();
-                    }, 3000);
-                },
+                        this.fetchSuratKeluarList();
+                    }, 3000); // Cek setiap 3 detik
+                }
+
             };
         }
-
     </script>
 </div>

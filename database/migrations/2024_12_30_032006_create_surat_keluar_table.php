@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('surat_keluar', function (Blueprint $table) {
             $table->id();
-            $table->enum('bidang_surat', ['kearsipan', 'sekretariat','layanan','pengembangan']);
+            $table->bigInteger('no');
+            $table->enum('bidang_surat', ['kearsipan', 'sekretariat','layanan','pengembangan','none']);
             $table->enum('kategori_surat', [
                 'Surat Perintah',
                 'Surat Tugas',
@@ -34,17 +35,12 @@ return new class extends Migration
                 'Sertifikat',
                 'Piagam',
             ]);
-            $table->date('tanggal_kirim_surat');
             $table->string('nomor_surat');
             $table->string('tanggal_surat');
             $table->string('tujuan_surat');
             $table->string('perihal_isi_surat');
             $table->string('keterangan');
-            $table->unsignedBigInteger('id_surat_masuk')->nullable();
-            $table->foreign('id_surat_masuk')
-                ->references('id')
-                ->on('surat_masuk')
-                ->onDelete('cascade');
+            $table->string('file_surat')->nullable();
             $table->timestamps();
         });
     }
