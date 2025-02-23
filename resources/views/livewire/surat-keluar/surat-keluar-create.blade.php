@@ -4,17 +4,6 @@
     <x-secondary-button @click="$wire.set('modalSuratKeluarCreate', true)">
         Tambah Surat Keluar
     </x-secondary-button>
-    @endif
-
-
-
-    {{-- <a href="{{ route('export.surat.keluar',['bidang_surat' => 'none', 'kategori_surat' => 'Surat Perintah']) }}" class="btn btn-sm inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
-        EXPORT EXCEL
-    </a>
-
-    <a href="{{ route('export-surat-pdf',['bidang_surat' => $bidang_surat, 'tipe_surat' => 'surat-keluar']) }}" class="btn btn-sm inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
-        EXPORT PDF
-    </a> --}}
 
     <form class="flex justify-end">
         <div class="w-full max-w-xs mr-3">
@@ -69,6 +58,10 @@
         </div>
     </form>
     
+    @endif
+
+
+
 
       
 
@@ -217,8 +210,18 @@
 
     </x-dialog-surat-masuk>
 
- 
+    
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputField = document.querySelector("input[wire\\:model='form.kode_klasifikasi']");
+            
+            if (inputField) {
+                inputField.addEventListener("input", function (event) {
+                    this.value = this.value.replace(/[^0-9.]/g, "").replace(/\s+/g, "");
+                });
+            }
+        });
+
         function suratKeluarRealtime() {
             return {
                 selectedKategori: '',

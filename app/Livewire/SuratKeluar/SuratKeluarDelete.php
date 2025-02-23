@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\SuratKeluar;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Locked;
+use Illuminate\Support\Facades\Storage;
 use App\Livewire\SuratKeluar\SuratKeluarTable;
 
 class SuratKeluarDelete extends Component
@@ -28,6 +29,9 @@ class SuratKeluarDelete extends Component
 
     public function del() {
         $del = SuratKeluar::findOrfail($this->id);
+        if ($del->file_surat) {
+            Storage::disk('public')->delete($del->file_surat);
+        }
         $del->update(
             [
             'bidang_surat' => 'none',

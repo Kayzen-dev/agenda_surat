@@ -28,7 +28,9 @@
         </div>
 
     </div>
-
+                
+    <livewire:FileSurat.file-surat />
+    <livewire:FileSurat.file-surat-update />
 
 
 </div>

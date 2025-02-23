@@ -100,7 +100,7 @@ class SuratKeluarCreate extends Component
         $this->dispatch('dispatch-surat-keluar-create-save')->to(SuratKeluarTable::class);
         $this->modalSuratKeluarCreate = false;
         $this->bidang_surat = $roles['0'];
-        $this->form->tahun = 2025;
+        $this->form->tahun = now()->year;
         $this->form->tanggal_surat = now()->toDateString();
 
 
