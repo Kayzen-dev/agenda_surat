@@ -1,5 +1,5 @@
 <div>
-    <x-modal-file id="uploadModal" maxWidth="lg" wire:model.live="showModal"  submit="uploadFile">
+    <x-modal-file id="uploadModal" maxWidth="lg" wire:model.live="showModal"  submit="updateFile">
         <x-slot name="title">
             Upload File PDF
         </x-slot>
@@ -11,7 +11,7 @@
         </x-slot>
 
         <x-slot name="footer">
-            <button type="submit" class="px-4 py-2 bg-blue-800 text-white rounded">Upload</button>
+            <button type="submit" class="px-4 py-2 bg-blue-800 text-white rounded">Perbaharui</button>
             <button type="button" wire:click="$set('showModal', false)" class="ml-2 px-4 py-2 bg-gray-700 text-white rounded">Batal</button>
         </x-slot>
     </x-modal-file>

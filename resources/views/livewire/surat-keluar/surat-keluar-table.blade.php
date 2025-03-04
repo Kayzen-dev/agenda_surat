@@ -1,6 +1,5 @@
 <div wire:poll>
-    {{-- @dd($data) --}}
-    {{-- @dd($route) --}}
+
     <label class="text-xs" for="jumlahSurat">Jumlah Data Yang Ditampilkan</label>
     <x-select wire:model="paginate" id="jumlahSurat" class="text-sm mt-8">
         <option value="3">3</option>
@@ -88,14 +87,26 @@
                                         Delete</x-danger-button>
 
                             @endif
+
                             @if($item->file_surat)
-                                <button wire:click="downloadFile({{ $item->id }})" class="btn btn-success">
+                                <button wire:click="downloadFile({{ $item->id }})" class="btn btn-success m-1">
                                     <i class="fas fa-download"></i> Unduh
                                 </button>
+                                @if (Auth::user()->hasRole($form->bidang_surat))
+                                        <button class="btn btn-primary m-1"  @click="$dispatch('dispatch-surat-keluar-table-update', { id: '{{ $item->id }}', tipeSurat : 'surat-keluar' })">
+                                            Ganti file
+                                        </button>
+                                @endif
                             @else
-                                <button class="btn btn-primary"  @click="$dispatch('dispatch-surat-keluar-table-upload', { id: '{{ $item->id }}' })">
-                                    Upload
-                                </button>
+                                @if (Auth::user()->hasRole($form->bidang_surat))
+                                    <button class="btn btn-primary m-1"  @click="$dispatch('dispatch-surat-keluar-table-upload', { id: '{{ $item->id }}', tipeSurat : 'surat-keluar' })">
+                                        Upload
+                                    </button>
+                                @else
+                                    <div class="badge badge-info">
+                                        File Belum Di upload
+                                    </div>
+                                @endif
                             @endif
                         </td>
 
@@ -114,8 +125,6 @@
     <div class="mt-3">
         {{ $data->onEachSide(1)->links() }}
     </div>
-
-    <livewire:FileSurat.file-surat />
 
 
   

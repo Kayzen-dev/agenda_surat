@@ -2,11 +2,12 @@
 
 namespace App\Livewire\SuratMasuk;
 
-use App\Livewire\SuratMasuk\SuratMasukTable;
-use App\Models\SuratMasuk;
 use Livewire\Component;
+use App\Models\SuratMasuk;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Locked;
+use Illuminate\Support\Facades\Storage;
+use App\Livewire\SuratMasuk\SuratMasukTable;
 
 class SuratMasukDelete extends Component
 {
@@ -27,6 +28,13 @@ class SuratMasukDelete extends Component
     }
 
     public function del() {
+        $surat = SuratMasuk::find($this->id);
+        if ($surat) {
+            if ($surat->file_surat) {
+                Storage::disk('public')->delete($surat->file_surat);
+            }
+        }
+        
         $del = SuratMasuk::destroy( $this->id );
 
         ($del)

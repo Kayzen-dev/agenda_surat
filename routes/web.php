@@ -1,14 +1,15 @@
 <?php
 
+use Carbon\Carbon;
 use App\Models\SuratMasuk;
 use App\Models\SuratKeluar;
 use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 
 Route::get('/', function(){
@@ -23,36 +24,6 @@ Route::get('/guest', function(){
 
 
 Route::middleware(['auth','verified','checkUser','session_timeout'])->group(function(){
-
-    Route::get('/upload-surat', function (Request $request){
-            // Validasi file PDF dan persentase
-            $request->validate([
-                'file_surat' => 'required|mimes:pdf', // file harus PDF
-            ], [
-                'file_surat.required' => 'File file_surat harus di tambahkan!',
-                'file_surat.mimes' => 'File harus berupa PDF!',
-            ]);
-        
-            // Mendapatkan file dari request
-            $file = $request->file('file_surat');
-        
-            // Tentukan nama file dan path penyimpanan berdasarkan persentase
-        
-            // Hapus file_surat lama jika ada
-            if (Storage::disk('public')->exists($file->extension())) {
-                Storage::disk('public')->delete($file->extension()); // Hapus file lama
-                Storage::disk('public')->put($file->extension(), file_get_contents($file));
-    
-                return back()->with('success', "File surat berhasil di Update!");
-            }
-        
-            // Simpan file baru ke storage/app/public/file_surat
-            Storage::disk('public')->put($file->extension(), file_get_contents($file));
-        
-            // Jika sukses, kembalikan respon atau redirect ke halaman lain
-            return back()->with('success', "File Surat berhasil diunggah!");
-        })->name('upload-file-surat');
-
 
     Route::get('/admin', function () {
         return view('admin.index');
@@ -128,6 +99,76 @@ Route::middleware(['auth','verified','checkUser','session_timeout'])->group(func
     
     Route::prefix('sekretariat')->middleware('role:sekretariat')->group(function () {
 
+
+            Route::post('/buat-data-surat-keluar-bulan', function (Request $request) {
+                // Ambil bulan dan tahun yang dipilih dari form
+                $bulan = $request->input('bulan');
+                $tahun = now()->year;
+            
+                $kategoriSuratList = [
+                    'Surat Perintah', 'Surat Tugas', 'Surat Perjalanan Dinas', 'Disposisi',
+                    'Nota Dinas', 'Surat Dinas', 'Surat Kuasa', 'Berita Acara', 'Surat Keterangan',
+                    'Telaahan Staf', 'Pengumuman', 'Surat Pernyataan Melaksanakan Tugas', 'Surat Panggilan',
+                    'Surat Izin', 'Surat Perjanjian', 'Rekomendasi', 'Sertifikat', 'Piagam'
+                ];
+            
+                Carbon::setLocale('id');
+                $bulanIni = Carbon::create($tahun, $bulan)->translatedFormat('F Y'); // Format bulan dan tahun yang dipilih
+                $hariDalamBulan = Carbon::create($tahun, $bulan)->daysInMonth; // Jumlah hari dalam bulan yang dipilih
+            
+                $semuaKategoriSudahPenuh = true; // Flag cek apakah semua kategori sudah penuh
+            
+                for ($tanggal = 1; $tanggal <= $hariDalamBulan; $tanggal++) {
+                    $tanggalSurat = sprintf('%02d', $tanggal) . " " . $bulanIni; // Format: "01 Februari 2025"
+            
+                    foreach ($kategoriSuratList as $kategoriSurat) {
+                        // Cek jumlah surat yang sudah ada untuk tanggal ini
+                        $countToday = DB::table('surat_keluar')
+                            ->where('kategori_surat', $kategoriSurat)
+                            ->where('tanggal_surat', $tanggalSurat)
+                            ->count();
+            
+                        if ($countToday >= 6) {
+                            continue;
+                        }
+            
+                        $semuaKategoriSudahPenuh = false; // Jika ada yang belum 6, maka masih bisa ditambah
+            
+                        // Cari nomor urut terakhir
+                        $lastSurat = DB::table('surat_keluar')
+                            ->where('kategori_surat', $kategoriSurat)
+                            ->orderBy('no', 'desc')
+                            ->first();
+                    
+                        $startNo = $lastSurat ? $lastSurat->no + 1 : 1;
+                        $sisaTambah = 6 - $countToday;
+            
+                        for ($i = 0; $i < $sisaTambah; $i++) {
+                            DB::table('surat_keluar')->insert([
+                                'no' => $startNo + $i,
+                                'bidang_surat' => 'none',
+                                'kategori_surat' => $kategoriSurat,
+                                'nomor_surat' => '-',
+                                'tanggal_surat' => $tanggalSurat,
+                                'tujuan_surat' => '-',
+                                'perihal_isi_surat' => '-',
+                                'keterangan' => '-',
+                                'created_at' => Carbon::now(),
+                                'updated_at' => Carbon::now(),
+                            ]);
+                        }
+                    }
+                }
+            
+                if ($semuaKategoriSudahPenuh) {
+                    return redirect()->route('sekretariat')->with('success','Data surat keluar sudah dibuat untuk bulan ini');
+                }
+            
+                return redirect()->route('sekretariat')->with('success','Surat berhasil dibuat untuk satu bulan penuh!');
+
+            })->name('sekre.buat.surat.keluar');
+            
+
         Route::get('/kearsipan', function () {
             return view('sekre.kearsipan');
         })->name('sekre.kearsipan.index');
@@ -140,6 +181,7 @@ Route::middleware(['auth','verified','checkUser','session_timeout'])->group(func
             return view('sekre.layanan');
         })->name('sekre.layanan.index');
 
+        
 
     });
 
@@ -166,7 +208,7 @@ Route::middleware(['auth','verified','checkUser','session_timeout'])->group(func
     })->name('export.surat.keluar');
 
 
-    Route::get('/export-surat-keluar-pdf/{kategori_surat}/{tipe_surat}', function($kategori_surat) {
+    Route::get('/export-surat-keluar-pdf/{kategori_surat}', function($kategori_surat) {
         $suratKeluar = SuratKeluar::where('kategori_surat', $kategori_surat)
             ->get();
 

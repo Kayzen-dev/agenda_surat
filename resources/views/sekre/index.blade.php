@@ -27,10 +27,45 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h2>ID user {{ auth()->user()->name }}</h2>
-                    <h1 class="text-2xl font-bold">Dashboard Sekretariat</h1>
+                    <div class="flex justify-between">
+                        <div >
+                            <h2>ID user {{ auth()->user()->name }}</h2>
+                            <h1 class="text-2xl font-bold">Dashboard Sekretariat</h1>
+                        </div>
 
+                        <form action="{{ route('sekre.buat.surat.keluar') }}"  method="POST">
+                            @csrf
+                            <label class="form-control w-full max-w-xs">
+                                <div class="label">
+                                  <span class="label-text">Buat Slot Data Exsel Surat Keluar Selama Bulan , Pilih Bulan :</span>
+                                  <span class="label-text-alt">Tahun {{ now()->year }}</span>
+                                </div>
+                                <select  name="bulan" id="bulan" class="select select-bordered">
+                                  <option disabled selected>Pick one</option>
+                                    @foreach(range(1, 12) as $bulan)
+                                            <option value="{{ $bulan }}" {{ $bulan == now()->month ? 'selected' : '' }}>
+                                                {{ \Carbon\Carbon::create()->month($bulan)->translatedFormat('F') }}
+                                            </option>
+                                        @endforeach
+                                </select>
+                                <button class="btn btn-sm mt-1" type="submit">Buat Data</button>
+    
+                               
+                              </label>
+                        </form>
+                    </div>
+         
+
+
+                    
+                    
+
+
+                   
+                    
                                     <livewire:TabSurat.tab-index/>
+                    
+
 
                 </div>
             </div>

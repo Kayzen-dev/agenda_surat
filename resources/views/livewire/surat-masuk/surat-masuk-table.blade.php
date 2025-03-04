@@ -96,6 +96,28 @@
                             @endif
 
                             
+                            @if($item->file_surat)
+                                <button wire:click="downloadFile({{ $item->id }})" class="btn btn-success m-1">
+                                    <i class="fas fa-download"></i> Unduh
+                                </button>
+                                @if (Auth::user()->hasRole($form->bidang_surat))
+                                        <button class="btn btn-primary m-1"  @click="$dispatch('dispatch-surat-keluar-table-update', { id: '{{ $item->id }}', tipeSurat : 'surat-masuk' })">
+                                            Ganti file
+                                        </button>
+                                @endif
+                            @else
+                                @if (Auth::user()->hasRole($form->bidang_surat))
+                                    <button class="btn btn-primary m-1"  @click="$dispatch('dispatch-surat-keluar-table-upload', { id: '{{ $item->id }}', tipeSurat : 'surat-masuk' })">
+                                        Upload
+                                    </button>
+                                @else
+                                    <div class="badge badge-info">
+                                        File Belum Di upload
+                                    </div>
+                                @endif
+                            @endif
+
+                            
                             
                             
                         </td>
@@ -114,4 +136,6 @@
     <div class="mt-3">
         {{ $data->onEachSide(1)->links() }}
     </div>
+
+
 </div>

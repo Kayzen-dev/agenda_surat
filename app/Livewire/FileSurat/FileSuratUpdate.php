@@ -4,87 +4,74 @@ namespace App\Livewire\FileSurat;
 
 use App\Models\User;
 use Livewire\Component;
-use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
+use App\Models\SuratKeluar;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Locked;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
-class FileSurat extends Component
+class FileSuratUpdate extends Component
 {
-
-    use  WithFileUploads;
+    use WithFileUploads;
 
     #[Locked]
     public $id;
 
     public $showModal = false;
     public $file;
-    public $selectedSuratId;
     public $bidangSurat;
     public $tipeSurat;
 
-    #[On('dispatch-surat-keluar-table-upload')]
-    public function set_file($id,$tipeSurat){
-        $this->id = $id;
+    #[On('dispatch-surat-keluar-table-update')]
+    public function set_file($id,$tipeSurat)
+    {
         $this->tipeSurat = $tipeSurat;
+        $this->id = $id;
         $this->showModal = true;
     }
 
-
-    public function uploadFile()
+    public function updateFile()
     {
         if (Auth::check()) {
             $user = User::find(Auth::id());
             $roles = $user->getRoleNames();  
-            $this->bidangSurat = $roles['0'];
+            $this->bidangSurat = $roles[0] ?? 'none';
         }
         
         $this->validate([
-            'file' => 'required|mimes:pdf', // Maksimal 2MB
-        ],
-        [
-            'file.required' => 'file surat wajid disi',
-            'file.mimes' => 'file surat harus pdf'
-        ]
-    
-    );
-
-        
+            'file' => 'required|mimes:pdf',
+        ]);
     
         $surat = $this->tipeSurat == 'surat-keluar' ? SuratKeluar::find($this->id) : SuratMasuk::find($this->id);
-
+        
         if ($surat) {
-            // Ambil nama asli file
-            $originalName = $this->file->getClientOriginalName();
-            
-            // Tambahkan tanggal di depan nama file
-            $timestamp = now()->format('Ymd_His'); // Format: TahunBulanTanggal_JamMenitDetik
-            $newFileName = $this->bidangSurat . '_' . $originalName;
+            // Hapus file lama jika ada
+            if ($surat->file_surat) {
+                Storage::disk('public')->delete($surat->file_surat);
+            }
     
-            // Simpan file dengan nama baru
+            // Simpan file baru
+            $originalName = $this->file->getClientOriginalName();
+            $newFileName = $this->bidangSurat . '_' . $originalName;
+
             $folder = $this->tipeSurat == 'surat-keluar' ? 'surat_keluar' : 'surat_masuk';
             $path = $this->file->storeAs($folder, $newFileName, 'public');
-            
-            // Simpan path ke database
+    
+            // Perbarui path file di database
             $surat->update(['file_surat' => $path]);
     
-            // Notifikasi sukses
-            $this->dispatch('notify', title: 'success', message: 'File berhasil diupload');
+            $this->dispatch('notify', title: 'success', message: 'File berhasil diperbarui');
             $this->showModal = false;
         } else {
-            // Notifikasi gagal
-            $this->dispatch('notify', title: 'fail', message: 'File gagal diupload');
+            $this->dispatch('notify', title: 'fail', message: 'File gagal diperbarui');
             $this->showModal = false;
         }
     }
     
-    
-
     public function render()
     {
-        return view('livewire..file-surat.file-surat');
+        return view('livewire.file-surat.file-surat-update');
     }
-
 }
